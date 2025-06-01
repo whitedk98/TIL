@@ -8,5 +8,7 @@
 ## Security
 * [001_cryptojacking](https://github.com/whitedk98/TIL/blob/main/security/001_cryptojacking.md)
 
+## AI
+* [000_introduce_llm](https://github.com/whitedk98/TIL/blob/main/artificial intelligence/llm/000_introduce_llm.md)
 ## ETC
 * New
