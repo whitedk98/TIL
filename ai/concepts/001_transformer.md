@@ -1,4 +1,4 @@
-# Transformer 심화 리서치 문서
+# Transformer 개념
 
 ---
 

@@ -9,6 +9,11 @@
 * [001_cryptojacking](https://github.com/whitedk98/TIL/blob/main/security/001_cryptojacking.md)
 
 ## AI
-* [000_introduce_llm](https://github.com/whitedk98/TIL/blob/main/ai/LLM/000_introduce_llm.md)
+* [AI Concepts](https://github.com/whitedk98/TIL/blob/main/ai/concepts)
+    * [001_transformer](https://github.com/whitedk98/TIL/blob/main/ai/concepts/001_transformer.md)
+
+* [LLM](https://github.com/whitedk98/TIL/blob/main/ai/LLM)
+    * [000_introduce_llm](https://github.com/whitedk98/TIL/blob/main/ai/LLM/000_introduce_llm.md)
+
 ## ETC
 * New
