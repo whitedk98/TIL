@@ -14,6 +14,7 @@
 
 * [LLM](https://github.com/whitedk98/TIL/blob/main/ai/LLM)
     * [000_introduce_llm](https://github.com/whitedk98/TIL/blob/main/ai/LLM/000_introduce_llm.md)
+    * [001_llm_experiment](https://github.com/whitedk98/TIL/blob/main/ai/LLM/001_llm_experiment.md)
 
 ## ETC
 * New

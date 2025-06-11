@@ -99,4 +99,4 @@ loss = F.cross_entropy(logits.flatten(0, 1), targets.flatten())
 ```
 
 ## History
-- 작성일: 2025-06-09
+- 작성일: 2025-06-12
