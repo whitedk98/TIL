@@ -68,27 +68,64 @@ NUM_LAYERS = 12
 ---
 
 ### ▸ Step 5: 훈련(Training)
+### ▸ 구성
 
-- 손실 함수: `CrossEntropyLoss`
-- 옵티마이저: `AdamW`
-- 학습 Epoch: 100+
-- 학습률: `4e-4`
+- 손실 함수: `nn.CrossEntropyLoss()`
+- 옵티마이저: `torch.optim.AdamW(model.parameters(), lr=4e-4)`
+- 학습률 스케줄러는 적용하지 않음 (단일 고정 학습률 사용)
+- 배치 사이즈: 64
+- Epoch 수: 100
+- 평가 주기: 1 epoch 마다 validation loss 측정
 
 ```python
-loss = F.cross_entropy(logits.flatten(0, 1), targets.flatten())
+for epoch in range(max_epoch):
+    for X, Y in train_loader:
+        logits = model(X)
+        loss = F.cross_entropy(logits.view(-1, vocab_size), Y.view(-1))
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+
 ```
 
-- 에폭별 Loss 시각화도 진행
+### ▸ 시각화
+- 학습이 진행됨에 따라 손실이 점차 감소함을 확인
+- 초기 10~20 에폭 동안 손실 감소 폭이 크고, 이후 점진적 수렴
 
----
+```python
+plt.plot(train_losses, label='Train Loss')
+plt.plot(valid_losses, label='Valid Loss')
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Training Curve")
+plt.legend()
+plt.grid(True)
+plt.show()
+```
 
 ## 4. 성능 및 테스트 결과
 
 ### ▸ 예측 방식
 
-- Autoregressive 예측 (한 토큰씩 반복 생성)
-- `generate()` 함수로 반복 샘플링
-- `top_k`, `temperature`, `eos_id` 조절 가능
+- Autoregressive 방식으로 토큰 하나씩 예측해 다음 입력으로 재귀 전달
+- `generate()` 함수 내에서 temperature, top_k, max_tokens 조절
+- 반복 예측 방식 구현:
+
+```python
+def generate(model, start_ids, max_tokens=100, temperature=1.0, top_k=50):
+    model.eval()
+    tokens = start_ids[:]
+    for _ in range(max_tokens):
+        input_tensor = torch.tensor(tokens[-context_length:]).unsqueeze(0)
+        logits = model(input_tensor)[:, -1, :]
+        logits = logits / temperature
+        top_logits, top_indices = torch.topk(logits, top_k)
+        probs = torch.softmax(top_logits, dim=-1)
+        next_token = top_indices[0, torch.multinomial(probs, 1)]
+        tokens.append(next_token.item())
+    return tokens
+
+```
 
 ### ▸ 예시 입력: `"Dobby is"`
 
@@ -99,4 +136,5 @@ loss = F.cross_entropy(logits.flatten(0, 1), targets.flatten())
 ```
 
 ## History
-- 작성일: 2025-06-12
+- 작성일: 2025-06-11
+- 수정일: 2025-06-12
