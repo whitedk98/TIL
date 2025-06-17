@@ -12,6 +12,8 @@
 * [AI Concepts](https://github.com/whitedk98/TIL/blob/main/ai/concepts)
     * [001_transformer](https://github.com/whitedk98/TIL/blob/main/ai/concepts/001_transformer.md)
     * [002_quantization](https://github.com/whitedk98/TIL/blob/main/ai/concepts/002_quantization.md)
+    * [003_attention](https://github.com/whitedk98/TIL/blob/main/ai/concepts/003_attention.md)
+    
 
 * [LLM](https://github.com/whitedk98/TIL/blob/main/ai/LLM)
     * [000_introduce_llm](https://github.com/whitedk98/TIL/blob/main/ai/LLM/000_introduce_llm.md)
