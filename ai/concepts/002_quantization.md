@@ -67,10 +67,19 @@
 - 가중치와 활성화 값을 32bit float → 8bit int로 변환
 - 예: `float32` weight → `int8` weight
 
-### 사용 사례
+  
+### 프레임워크별 PTQ 처리 지원 및 하드웨어 제약
 
-- **모바일 디바이스**나 **임베디드 시스템** 등에서 빠른 추론 및 경량화가 필요할 때
-- 학습을 반복하기 어려운 상황에서 신속한 배포가 필요한 경우
+| 프레임워크 | PTQ 지원 | GPU 지원 | 특징 |
+| --- | --- | --- | --- |
+| **PyTorch** | 지원 | ❌ (CPU only) | `torch.quantization.convert()`는 CPU 백엔드만 지원하며, GPU 실행을 위한 int8 연산 커널이 제공되지 않음. |
+| **TensorFlow (TFLite)** | 지원 | ✅ | `tflite_convert`를 통해 GPU delegate와 함께 실행 가능. GPU에서 INT8 연산을 위한 delegate 최적화 제공. |
+| **ONNX Runtime** | 지원 | ✅ (제한적) | `quantize_static` 사용 시 일부 GPU 실행 가능하나 대부분은 CPU backend에 의존함. |
+| **OpenVINO** | 지원 | ✅ | Intel GPU, VPU를 포함한 다양한 디바이스에서 정적 양자화 최적화 지원. |
+| **TensorRT** | 지원 | ✅ | NVIDIA GPU 기반 inference 최적화 가능. 단, calibration 과정이 반드시 필요함. |
+
+> PyTorch의 PTQ는 현재까지 CPU 전용 백엔드를 중심으로 설계되어 있으므로, GPU 기반 환경에서 실행 성능을 극대화하려면 QAT(Quantization-Aware Training) 또는 TensorRT, TFLite와 같은 엔진 사용이 필요합니다.
+
 
 ---
 
