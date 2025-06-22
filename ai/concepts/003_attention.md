@@ -81,3 +81,69 @@ sat   0.1  0.2  0.3  0.2  0.1  0.1
 - 각 **Column**은 해당 Query가 주목한 **Key**에 대한 가중치입니다.
 - 각 값은 해당 Query가 해당 Key에 얼마나 집중했는지를 나타내는 **가중치(softmax score)**입니다.
 - 각 행의 합산은 softmax로 처리된 결과에 의해 항상 1입니다.
+
+---
+## 🔍 Positional Encoding이 의미 차이를 인식하게 만드는 이유
+
+### 1. 순서가 없는 Self-Attention의 한계
+
+Transformer는 기본적으로 **Self-Attention** 메커니즘을 사용해서 시퀀스 내 모든 토큰을 동시에 비교합니다.
+
+하지만 이 구조는 다음과 같은 한계를 갖습니다:
+
+- `"The cat sat"`와 `"Sat cat the"`는 **토큰의 순서만 다르고 구성은 동일하지만**,
+    
+    Attention 자체는 순서를 인식하지 못하므로 **같은 결과를 생성할 가능성**이 있습니다.
+    
+
+---
+
+### 2. 위치 정보를 전달하는 수식의 역할
+
+### 수식:
+
+$$
+PE(pos, 2i) = \sin\left(\frac{pos}{10000^{\frac{2i}{d_{model}}}}\right)
+$$
+$$
+PE(pos, 2i+1) = \cos\left(\frac{pos}{10000^{\frac{2i}{d_{model}}}}\right)
+$$
+
+이 수식은 다음과 같은 특성을 갖습니다:
+
+- **pos**는 위치 값이고, **i**는 임베딩 차원의 인덱스입니다.
+- 다양한 주기(sin, cos의 다양한 주파수)를 통해 위치별로 서로 **선형적으로 독립적인 벡터 값**을 생성합니다.
+- 이 벡터는 **서로 다른 위치 pos1 ≠ pos2**에 대해 항상 다른 값을 가지며, 이러한 차이는 Transformer의 Attention 계산에 직접 반영됩니다.
+
+---
+
+### 3. 위치 차이에 따른 내적 결과 변화
+
+Self-Attention에서 중요한 점은, Attention Score가 다음과 같이 계산된다는 점입니다:
+
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+$$
+
+- 여기서 Q, K는 각각 토큰의 표현을 나타냅니다.
+- `QK^T`는 **두 토큰 간 유사도(내적)** 를 의미합니다.
+
+### 핵심 포인트:
+
+- 토큰 A와 B의 단어 자체는 동일하더라도 **PositionalEncoding이 다르면 Q, K가 달라집니다.**
+- 이는 **Attention Score가 달라지는 효과**로 이어져, 결과적으로 `"cat sat"`과 `"sat cat"`을 다르게 처리하게 만듭니다.
+
+---
+
+### 4. 예시로 보는 의미 차이 포착
+
+| 문장 A | 문장 B |
+| --- | --- |
+| `"He ate fish"` | `"Fish ate he"` |
+- 토큰 `"ate"`는 양쪽 문장에서 등장하지만, 앞/뒤에 오는 단어의 순서가 다릅니다.
+- Positional Encoding이 없으면 `"ate"`는 동일한 벡터로 인코딩되지만,
+- 위치 기반 인코딩을 추가하면 `"He-ate-fish"`와 `"Fish-ate-he"`는 완전히 다른 벡터 흐름을 형성하게 됩니다.
+- 결과적으로, 모델은 `"ate"`가 주체인지 객체인지 위치에 따라 구분 가능하게 됩니다.
+
+## History
+작성일: `2025-06-22` 

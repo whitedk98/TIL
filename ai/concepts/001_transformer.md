@@ -23,7 +23,34 @@ Transformer는 딥러닝 분야에서 혁신적인 구조로 주목받고 있습
 
 ### ▸ Positional Encoding
 
-- Transformer는 데이터를 병렬적으로 처리하기 때문에, 단어의 순서 정보를 유지할 수 없습니다. 이 문제를 해결하기 위해 Positional Encoding이라는 벡터를 각 입력 데이터에 추가하여, 단어의 위치 정보를 인공적으로 부여합니다.
+- Transformer는 입력 시퀀스를 병렬로 처리하기 때문에, 순서 정보를 직접적으로 반영하지 않습니다.
+- 이를 해결하기 위해 각 입력 토큰에 위치 정보를 담은 **Positional Encoding**을 더합니다.
+
+- Transformer의 구조상 입력 순서 정보가 손실되기 때문에, 이를 보완하는 것이 Positional Encoding입니다. 대표적으로 두 가지 방식이 있습니다:
+
+1. **Sinusoidal Encoding (정적)**
+    
+    논문에서는 아래와 같이 정의된 사인/코사인 함수를 사용합니다:
+    
+    $$PE(pos, 2i) = \sin\left(\frac{pos}{10000^{\frac{2i}{d_{model}}}}\right)$$
+    
+    - 위치마다 주기성이 다른 고유 벡터가 생성되어 토큰에 더해짐
+    - 외삽(extrapolation)에 유리함
+2. **Learnable Positional Embedding (학습형)**
+    
+    GPT 등에서는 위치 벡터 자체를 학습합니다.
+    
+    - 유연한 위치 표현 가능
+    - 단점은 훈련되지 않은 길이에 대해 일반화가 어려움
+3. **LLM에서의 확장 기법**
+    - **RoPE** (LLaMA): 회전 기반의 위치 인코딩
+    - **ALiBi**: 길이 제한 없이 직선적인 attention decay 적용
+    - **T5**: 토큰 위치가 아닌 **상대적 거리(Relative Position)** 기반 attention 사용
+
+    ### 사용 방식:
+    $$ PE(pos, 2i+1) = \cos\left(\frac{pos}{10000^{\frac{2i}{d_{model}}}}\right) $$
+
+- 이를 통해 단어 임베딩만으로는 알 수 없는 **위치 기반 의미 차이**를 모델이 인식할 수 있게 됩니다.
 
 ### ▸ 병렬 처리
 
@@ -81,5 +108,5 @@ Transformer는 딥러닝 분야에서 혁신적인 구조로 주목받고 있습
 
 
 ## History
-
-작성일: 2025-06-03
+작성일: `2025-06-03`  
+수정일: `2025-06-22`
